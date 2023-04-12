@@ -5,7 +5,7 @@ import 'constant.dart';
 import 'file_handler.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as invoice;
-import 'parse_unicode.dart';
+import 'extension.dart';
 
 class PdfInvoiceApi {
   static Future<File> generate() async {
