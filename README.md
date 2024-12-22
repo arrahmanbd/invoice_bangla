@@ -1,16 +1,24 @@
-# invoice_bangla
+# Generate PDF in Bangla 
 
-A new Flutter project.
+Generate PDFs in Bangla without breaking fonts. This code demonstrates the handling of Bangla character rearrangement, replacement, and adjustment to ensure proper ligatures and accurate text rendering.
+## What It Does? :
+The code is essentially a Bangla text renderer or converter that ensures:
 
-## Getting Started
+Proper arrangement of Bangla characters for accurate display.
+Conversion of text into a desired Bangla font encoding (or mapping).
+Removal of invisible characters and unused formatting markers.
+## This is often used in:
 
-This project is a starting point for a Flutter application.
+Converting Bangla text from one legacy encoding to Unicode or vice versa.
+Preparing text for custom Bangla fonts or ensuring compatibility with legacy systems.
+Rendering Bangla text correctly in environments with limited font or script support.
 
-A few resources to get you started if this is your first Flutter project:
+![app_screnshot](demo/screenshot.jpg)
+# Output
+[Click here to check the output file](demo/my_invoice.pdf)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Contributing
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Contributions are welcome! If you find a bug or want to suggest a feature, please open an issue or submit a pull request.
+
+## "Please don't ask me to publish this package—I'll be doing it soon!" ##

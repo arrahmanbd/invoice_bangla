@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'file_handler.dart';
-import 'invoice_api.dart';
+import 'utils/pdf_helper.dart';
+import 'make_invoice.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +24,15 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Invoice'),
+        backgroundColor: Colors.teal,
+        title:  const Text('PDF Invoice in Bnagla', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
       ),
       body: Center(
         child: Column(
@@ -53,12 +55,11 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 30.0),
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.indigo)
-              ),
+                  backgroundColor: WidgetStateProperty.all(Colors.teal)),
               child: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 60.0, vertical: 8.0),
                 child: Text(
-                  'Create Invoice',
+                  'Create Invoice PDF',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16.0,
@@ -69,7 +70,7 @@ class HomePage extends StatelessWidget {
               onPressed: () async {
                 // generate pdf invoice file
                 final pdfFile = await PdfInvoiceApi.generate();
-                FileHandleApi.openFile(pdfFile);
+                PDFHelper.openFile(pdfFile);
               },
             ),
           ],

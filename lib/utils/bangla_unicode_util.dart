@@ -1,116 +1,170 @@
 import 'dart:core';
 
-String uniCode(String unicode) {
-  return _fixFont(unicode);
+/// New extension for easy conversion of Bangla Unicode strings.
+/// I will provide a package soon as it's a big problem for all. (AR)
+
+/// What It Does?:
+// The code is essentially a Bangla text renderer or converter that ensures:
+// Proper arrangement of Bangla characters for accurate display.
+// Conversion of text into a desired Bangla font encoding (or mapping).
+// Removal of invisible characters and unused formatting markers.
+
+// This is often used in?:
+// Converting Bangla text from one legacy encoding to Unicode or vice versa.
+// Preparing text for custom Bangla fonts or ensuring compatibility with legacy systems.
+// Rendering Bangla text correctly in environments with limited font or script support.
+extension UnicodeFixerExtension on String {
+  String toRepair() {
+    return BanglaUnicodeMapper.fixBrokenFont(this);
+  }
 }
 
-String _fixFont(String unicodeStr) {
-  unicodeStr = unicodeStr.replaceAll("য়", "য়").replaceAll("\u200d", "\u200c");
-
-  final unicodeStrList = unicodeStr.split('\n');
-
-  var result = "";
-
-  for (final s in unicodeStrList) {
-    result += _fixFontInner(s) + '\n';
+/// A utility class for fixing and mapping Bangla Unicode strings.
+class BanglaUnicodeMapper {
+  static String fixBrokenFont(String unicode) {
+    return _fixFont(unicode);
   }
-  final strippedRes = result.replaceAll("\n", "");
-  result = '';
-  for (int i = 0; i < strippedRes.length; i++) {
-    if (strippedRes.codeUnitAt(i) != 8204) {
-      result += strippedRes[i];
+
+  static String _fixFont(String unicodeStr) {
+    unicodeStr =
+        unicodeStr.replaceAll("য়", "য়").replaceAll("\u200d", "\u200c");
+
+    final unicodeStrList = unicodeStr.split('\n');
+    var result = "";
+
+    for (final s in unicodeStrList) {
+      result += '${_fixFontInner(s)}\n';
     }
+    final strippedRes = result.replaceAll("\n", "");
+    result = '';
+    for (int i = 0; i < strippedRes.length; i++) {
+      if (strippedRes.codeUnitAt(i) != 8204) {
+        result += strippedRes[i];
+      }
+    }
+    return result;
   }
-  return result;
-}
 
-String _fixFontInner(String line) {
-  line = line.replaceAll("ো", "ো");
-  line = line.replaceAll("ৌ", "ৌ");
-  line = _rearrangeUnicodeStr(line);
+  static String _fixFontInner(String line) {
+    line = line.replaceAll("ো", "ো");
+    line = line.replaceAll("ৌ", "ৌ");
+    line = _rearrangeUnicodeStr(line);
 
-  _conversionMap.forEach((key, value) {
-    line = line.replaceAll(key, value);
-  });
-  return line;
-}
+    _conversionMap.forEach((key, value) {
+      line = line.replaceAll(key, value);
+    });
+    return line;
+  }
 
-String _rearrangeUnicodeStr(String text) {
-  int barrier = 0;
-  int i = 0;
-  while (i < text.length) {
-    if (i < text.length && _is_bangla_pre_kar(text[i])) {
-      int j = 1;
-      while (_is_bangla_banjonborno(text[i - j])) {
-        if (i - j < 0) {
-          break;
+  static String _rearrangeUnicodeStr(String text) {
+    int barrier = 0;
+    int i = 0;
+    while (i < text.length) {
+      if (i < text.length && _isBanglaPreKar(text[i])) {
+        int j = 1;
+        while (_isBanglaBanjonborno(text[i - j])) {
+          if (i - j < 0) break;
+          if (i - j <= barrier) break;
+          if (_isBanglaHalant(text[i - j - 1])) {
+            j += 2;
+          } else {
+            break;
+          }
         }
-        if (i - j <= barrier) {
-          break;
-        }
-        if (_is_bangla_halant(text[i - j - 1])) {
-          j += 2;
-        } else {
-          break;
-        }
+
+        String temp = text.substring(0, i - j);
+        temp += text[i];
+        temp += text.substring(i - j, i);
+        temp += text.substring(i + 1, text.length);
+        text = temp;
+        barrier = i + 1;
       }
 
-      String temp = text.substring(0, i - j);
-      temp += text[i];
-      temp += text.substring(i - j, i);
-      temp += text.substring(i + 1, text.length);
-      text = temp;
-      barrier = i + 1;
-    }
-    if (i < (text.length - 1) &&
-        _is_bangla_halant(text[i]) &&
-        text[i - 1] == 'র' &&
-        !_is_bangla_halant(text[i - 2])) {
-      int j = 1;
-      int foundPreKar = 0;
-      while (true) {
-        if (_is_bangla_banjonborno(text[i + j]) &&
-            _is_bangla_halant(text[i + j + 1])) {
-          j += 2;
-        } else if (_is_bangla_banjonborno(text[i + j]) &&
-            _is_bangla_pre_kar(text[i + j + 1])) {
-          foundPreKar = 1;
-          break;
-        } else {
-          break;
+      if (i < (text.length - 1) &&
+          _isBanglaHalant(text[i]) &&
+          text[i - 1] == 'র' &&
+          !_isBanglaHalant(text[i - 2])) {
+        int j = 1;
+        int foundPreKar = 0;
+        while (true) {
+          if (_isBanglaBanjonborno(text[i + j]) &&
+              _isBanglaHalant(text[i + j + 1])) {
+            j += 2;
+          } else if (_isBanglaBanjonborno(text[i + j]) &&
+              _isBanglaPreKar(text[i + j + 1])) {
+            foundPreKar = 1;
+            break;
+          } else {
+            break;
+          }
         }
+
+        String temp = text.substring(0, i - 1);
+        temp += text.substring(i + j + 1, i + j + foundPreKar + 1);
+        temp += text.substring(i + 1, i + j + 1);
+        temp += text[i - 1];
+        temp += text[i];
+        temp += text.substring(i + j + foundPreKar + 1, text.length);
+        text = temp;
+        i += j + foundPreKar;
+        barrier = i + 1;
       }
-      String temp = text.substring(0, i - 1);
-      temp += text.substring(i + j + 1, i + j + foundPreKar + 1);
-      temp += text.substring(i + 1, i + j + 1);
-      temp += text[i - 1];
-      temp += text[i];
-      temp += text.substring(i + j + foundPreKar + 1, text.length);
-      text = temp;
-      i += j + foundPreKar;
-      barrier = i + 1;
+      i += 1;
     }
-    i += 1;
+    return text;
   }
-  return text;
-}
 
+  static bool _isBanglaPreKar(String chUnicode) {
+    return ['ি', 'ৈ', 'ে'].contains(chUnicode);
+  }
 
-bool _is_bangla_pre_kar(String ch_unicode) {
-    return ['ি', 'ৈ', 'ে'].contains(ch_unicode);
-}
+  static bool _isBanglaBanjonborno(String chUnicode) {
+    return [
+      'ক',
+      'খ',
+      'গ',
+      'ঘ',
+      'ঙ',
+      'চ',
+      'ছ',
+      'জ',
+      'ঝ',
+      'ঞ',
+      'ট',
+      'ঠ',
+      'ড',
+      'ঢ',
+      'ণ',
+      'ত',
+      'থ',
+      'দ',
+      'ধ',
+      'ন',
+      'প',
+      'ফ',
+      'ব',
+      'ভ',
+      'ম',
+      'শ',
+      'ষ',
+      'স',
+      'হ',
+      'য',
+      'র',
+      'ল',
+      'য়',
+      'ং',
+      'ঃ',
+      'ঁ',
+      'ৎ'
+    ].contains(chUnicode);
+  }
 
+  static bool _isBanglaHalant(String chUnicode) {
+    return chUnicode == '্';
+  }
 
-bool _is_bangla_banjonborno(String ch_unicode){
-return ['ক', 'খ', 'গ', 'ঘ', 'ঙ', 'চ', 'ছ', 'জ', 'ঝ', 'ঞ', 'ট', 'ঠ', 'ড', 'ঢ', 'ণ', 'ত', 'থ', 'দ', 'ধ', 'ন', 'প', 'ফ', 'ব', 'ভ', 'ম', 'শ', 'ষ', 'স', 'হ', 'য', 'র', 'ল', 'য়', 'ং', 'ঃ', 'ঁ', 'ৎ'].contains(ch_unicode);
-}
-
-bool _is_bangla_halant(String ch_unicode) {
-return ch_unicode == '্';
-}
-
-
-const _conversionMap = {
+  static const _conversionMap = {
     "।": "|",
     "‘": "Ô",
     "’": "Õ",
@@ -331,4 +385,5 @@ const _conversionMap = {
     "ং": "s",
     "ঃ": "t",
     "ঁ": "u",
-};
+  };
+}
