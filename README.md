@@ -20,5 +20,3 @@ Rendering Bangla text correctly in environments with limited font or script supp
 ## Contributing
 
 Contributions are welcome! If you find a bug or want to suggest a feature, please open an issue or submit a pull request.
-
-## "Please don't ask me to publish this package—I'll be doing it soon!" ##
