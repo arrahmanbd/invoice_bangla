@@ -1,18 +1,12 @@
-# Generate PDF in Bangla 
+This repository is no longer maintained. I have already created two separate packages for better PDF generation:  
 
-Generate PDFs in Bangla without breaking fonts. This code demonstrates the handling of Bangla character rearrangement, replacement, and adjustment to ensure proper ligatures and accurate text rendering.
-## What It Does? :
-The code is essentially a Bangla text renderer or converter that ensures:
+1. **Bangla PDF Fixer** – Focused on Bangla text rendering with 10 different custom fonts.  
+   👉 [Bangla PDF Fixer](https://pub.dev/packages/bangla_pdf_fixer)  
 
-Proper arrangement of Bangla characters for accurate display.
-Conversion of text into a desired Bangla font encoding (or mapping).
-Removal of invisible characters and unused formatting markers.
-## This is often used in:
+2. **PDFMaker** – Supports all languages for generating PDFs.  
+   👉 [PDFMaker](https://pub.dev/packages/pdf_maker)  
 
-Converting Bangla text from one legacy encoding to Unicode or vice versa.
-Preparing text for custom Bangla fonts or ensuring compatibility with legacy systems.
-Rendering Bangla text correctly in environments with limited font or script support.
-
+Please use these packages instead for improved functionality and ongoing support. 🚀
 ![app_screnshot](demo/screenshot.jpg)
 # Output
 [Click here to check the output file](demo/my_invoice.pdf)
